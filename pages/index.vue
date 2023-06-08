@@ -1,18 +1,19 @@
 <template>
-    <div>
-        <h1>Beers</h1>
-        <ul>
-            <li v-for="beer in sortedBeers" :key="beer.id">
-                <h2>Name: {{ beer.name }}</h2>
-                <p>Tagline: {{ beer.tagline }}</p>
-                <p>Description: {{ beer.description }}</p>
+    <div class="container">
+        <div v-for="beer in sortedBeers" :key="beer.id" class="beer-card">
+            <div class="beer-image">
                 <img :src="beer.image_url" :alt="beer.name" />
+            </div>
+            <div class="beer-info">
+                <h2>{{ beer.name }}</h2>
+                <p>{{ beer.tagline }}</p>
+                <p>{{ beer.description }}</p>
                 <p>ABV: {{ beer.abv }}</p>
                 <p>IBU: {{ beer.ibu }}</p>
                 <p v-if="containsLactose(beer)">Contains Lactose</p>
                 <p v-if="isDryHopped(beer)">Dry Hopped</p>
-            </li>
-        </ul>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -41,7 +42,7 @@ export default {
     computed: {
         sortedBeers() {
             return this.beers
-            // filter the beer by using the ! operator which changes the sense of the expression, now it will return true if the beers do not contain Centennial Hops, in this way we can remove it
+                // filter the beer by using the ! operator which changes the sense of the expression, now it will return true if the beers do not contain Centennial Hops, in this way we can remove it
 
                 // called the function created below
                 .filter(beer => !this.containsCentennialHops(beer))
@@ -65,3 +66,56 @@ export default {
     }
 };
 </script>
+
+<style>
+
+/* div where everything is displayed, flex wrap in order to let the beers continue below when it does not fit in the screen */
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-evenly;
+}
+
+/* div where displays the information of each beer, is a card 
+    adding bckg color and defining the width of the cards
+*/
+.beer-card {
+    display: flex;
+    width: 45%;
+    background-color: lightgray;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+/* defining the size of the beer img container and adding padding tot he right to make space between img and text */
+.beer-image {
+    width: 20%;
+    margin-right: 20px;
+}
+
+/* beer img inside the beer container width */
+.beer-image img {
+    width: 100%;
+}
+
+/* container where all the text information is going to be displayed */
+.beer-info {
+    width: 70%;
+}
+
+.beer-info h2 {
+    margin-top: 0;
+}
+
+.beer-info p {
+    margin: 0;
+}
+
+@media screen and (max-width: 767px) {
+    .beer-card {
+        width: 100%;
+        /* Full width on smaller screens */
+    }
+}
+</style>
