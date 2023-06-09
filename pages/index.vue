@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <link rel="stylesheet" href="../assets/app.css">
         <div v-for="beer in sortedBeers" :key="beer.id" class="beer-card">
             <div class="beer-image">
                 <img :src="beer.image_url" :alt="beer.name" />
@@ -10,8 +11,8 @@
                 <p>{{ beer.description }}</p>
                 <p>ABV: {{ beer.abv }}</p>
                 <p>IBU: {{ beer.ibu }}</p>
-                <p v-if="containsLactose(beer)">Contains Lactose</p>
-                <p v-if="isDryHopped(beer)">Dry Hopped</p>
+                <p class="warning" v-if="wordVerification(beer, 'lactose')">Contains Lactose⚠</p>
+                <p class="highlight" v-if="wordVerification(beer, 'dry hop')">Dry Hopped</p>
             </div>
         </div>
     </div>
@@ -43,25 +44,16 @@ export default {
         sortedBeers() {
             return this.beers
                 // filter the beer by using the ! operator which changes the sense of the expression, now it will return true if the beers do not contain Centennial Hops, in this way we can remove it
-
-                // called the function created below
-                .filter(beer => !this.containsCentennialHops(beer))
+                .filter(beer => !this.wordVerification(beer, 'centennial'))
                 // create the ascending sorting using the .sort() method
                 .sort((a, b) => a.abv - b.abv);
         }
     },
     methods: {
-        // check if beers contain lactose and dry hop with the provided items
-        containsLactose(beer) {
-            return beer.ingredients && beer.ingredients.toString().includes('lactose');
-        },
-        // function to check if the beer object has a method property and if that method property has a twist property. If so, convert the value of twist to lower case and checks the result string includes 'dry hop'
-        isDryHopped(beer) {
-            return beer.method && beer.method.twist && beer.method.twist.toLowerCase().includes('dry hop');
-        },
-        // function to check if inside the ingredients property if there is a hops array with the name of Centennial, if there is, then the result will be true. use this function before in order to remove the centenial hops when filtering
-        containsCentennialHops(beer) {
-            return beer.ingredients && beer.ingredients.hops.some(hop => hop.name === 'Centennial');
+        // function to verify the words in order to avoid repetition. pass and received two parameters, beer parameter and a word that is being defined before depending on the needs
+        wordVerification(beer, word){
+            // convert all the JSON file into a string so it can check the word needed and returns a boolean value that can be used after.
+            return JSON.stringify(beer).toLowerCase().includes(word)
         }
     }
 };
@@ -110,6 +102,14 @@ export default {
 
 .beer-info p {
     margin: 0;
+}
+
+.warning{
+    background-color: rgb(162, 97, 97);
+}
+
+.highlight{
+    background-color: yellow;
 }
 
 @media screen and (max-width: 767px) {
